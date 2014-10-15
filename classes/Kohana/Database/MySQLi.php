@@ -3,7 +3,7 @@
  * MySQLi database connection.
  *
  * @package    Kohana/Database
- * @category   Query/Result
+ * @category   Drivers
  * @author     Tom Lankhorst
  * @copyright  (c) 2008-2009 Kohana Team
  * @license    http://kohanaphp.com/license
