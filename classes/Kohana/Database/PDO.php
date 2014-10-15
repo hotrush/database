@@ -78,7 +78,7 @@ class Kohana_Database_PDO extends Database {
 	 */
 	public function create_aggregate($name, $step, $final, $arguments = -1)
 	{
-		$this->_connection or $this->connect();
+		$this->ping() or $this->connect();
 
 		return $this->_connection->sqliteCreateAggregate(
 			$name, $step, $final, $arguments
@@ -100,7 +100,7 @@ class Kohana_Database_PDO extends Database {
 	 */
 	public function create_function($name, $callback, $arguments = -1)
 	{
-		$this->_connection or $this->connect();
+		$this->ping() or $this->connect();
 
 		return $this->_connection->sqliteCreateFunction(
 			$name, $callback, $arguments
@@ -118,7 +118,7 @@ class Kohana_Database_PDO extends Database {
 	public function set_charset($charset)
 	{
 		// Make sure the database is connected
-		$this->_connection OR $this->connect();
+		$this->ping() OR $this->connect();
 
 		// This SQL-92 syntax is not supported by all drivers
 		$this->_connection->exec('SET NAMES '.$this->quote($charset));
@@ -127,7 +127,7 @@ class Kohana_Database_PDO extends Database {
 	public function query($type, $sql, $as_object = FALSE, array $params = NULL)
 	{
 		// Make sure the database is connected
-		$this->_connection or $this->connect();
+		$this->ping() or $this->connect();
 
 		if (Kohana::$profiling)
 		{
@@ -203,7 +203,7 @@ class Kohana_Database_PDO extends Database {
 	public function begin($mode = NULL)
 	{
 		// Make sure the database is connected
-		$this->_connection or $this->connect();
+		$this->ping() or $this->connect();
 
 		return $this->_connection->beginTransaction();
 	}
@@ -211,7 +211,7 @@ class Kohana_Database_PDO extends Database {
 	public function commit()
 	{
 		// Make sure the database is connected
-		$this->_connection or $this->connect();
+		$this->ping() or $this->connect();
 
 		return $this->_connection->commit();
 	}
@@ -219,7 +219,7 @@ class Kohana_Database_PDO extends Database {
 	public function rollback()
 	{
 		// Make sure the database is connected
-		$this->_connection or $this->connect();
+		$this->ping() or $this->connect();
 
 		return $this->_connection->rollBack();
 	}
@@ -239,9 +239,24 @@ class Kohana_Database_PDO extends Database {
 	public function escape($value)
 	{
 		// Make sure the database is connected
-		$this->_connection or $this->connect();
+		$this->ping() or $this->connect();
 
 		return $this->_connection->quote($value);
 	}
+
+    public function ping()
+    {
+        if (!$this->_connection)
+        {
+            return false;
+        }
+        try {
+            $this->query(self::SELECT,'SELECT 1');
+        } catch (PDOException $e) {
+            $this->disconnect();
+            return false;
+        }
+        return true;
+    }
 
 } // End Database_PDO

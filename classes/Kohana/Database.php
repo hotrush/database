@@ -723,4 +723,14 @@ abstract class Kohana_Database {
 	 */
 	abstract public function escape($value);
 
+    /**
+     * Check if mysql connection is still active and trying to reconnect if not
+     * Available for mysql, mysqli and pdo
+     * @author  Roma Rush
+     * @web     https://github.com/hotrush
+     * @return  boolean
+     */
+
+    abstract public function ping();
+
 } // End Database_Connection

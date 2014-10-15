@@ -144,7 +144,7 @@ class Kohana_Database_MySQL extends Database {
 	public function set_charset($charset)
 	{
 		// Make sure the database is connected
-		$this->_connection or $this->connect();
+		$this->ping() or $this->connect();
 
 		if (Database_MySQL::$_set_names === TRUE)
 		{
@@ -168,7 +168,7 @@ class Kohana_Database_MySQL extends Database {
 	public function query($type, $sql, $as_object = FALSE, array $params = NULL)
 	{
 		// Make sure the database is connected
-		$this->_connection or $this->connect();
+		$this->ping() or $this->connect();
 
 		if (Kohana::$profiling)
 		{
@@ -283,7 +283,7 @@ class Kohana_Database_MySQL extends Database {
 	public function begin($mode = NULL)
 	{
 		// Make sure the database is connected
-		$this->_connection or $this->connect();
+		$this->ping() or $this->connect();
 
 		if ($mode AND ! mysql_query("SET TRANSACTION ISOLATION LEVEL $mode", $this->_connection))
 		{
@@ -303,7 +303,7 @@ class Kohana_Database_MySQL extends Database {
 	public function commit()
 	{
 		// Make sure the database is connected
-		$this->_connection or $this->connect();
+		$this->ping() or $this->connect();
 
 		return (bool) mysql_query('COMMIT', $this->_connection);
 	}
@@ -316,7 +316,7 @@ class Kohana_Database_MySQL extends Database {
 	public function rollback()
 	{
 		// Make sure the database is connected
-		$this->_connection or $this->connect();
+		$this->ping() or $this->connect();
 
 		return (bool) mysql_query('ROLLBACK', $this->_connection);
 	}
@@ -428,7 +428,7 @@ class Kohana_Database_MySQL extends Database {
 	public function escape($value)
 	{
 		// Make sure the database is connected
-		$this->_connection or $this->connect();
+		$this->ping() or $this->connect();
 
 		if (($value = mysql_real_escape_string( (string) $value, $this->_connection)) === FALSE)
 		{
@@ -440,5 +440,19 @@ class Kohana_Database_MySQL extends Database {
 		// SQL standard is to use single-quotes for all values
 		return "'$value'";
 	}
+
+    public function ping()
+    {
+        if (!$this->_connection)
+        {
+            return false;
+        }
+
+        if (!mysql_ping($this->_connection)) {
+            $this->disconnect();
+            return false;
+        }
+        return true;
+    }
 
 } // End Database_MySQL
