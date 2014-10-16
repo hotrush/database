@@ -443,15 +443,18 @@ class Kohana_Database_MySQL extends Database {
 
     public function ping()
     {
-        if (!$this->_connection)
+        if ( ! $this->_connection)
         {
             return false;
         }
 
-        if (!mysql_ping($this->_connection)) {
+        if ( ! mysql_ping($this->_connection))
+        {
             $this->disconnect();
+
             return false;
         }
+
         return true;
     }
 

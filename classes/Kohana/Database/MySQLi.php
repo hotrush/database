@@ -422,15 +422,18 @@ class Kohana_Database_MySQLi extends Database {
 
     public function ping()
     {
-        if (!$this->_connection)
+        if ( ! $this->_connection)
         {
             return false;
         }
 
-        if (!mysqli_ping($this->_connection)) {
+        if ( ! mysqli_ping($this->_connection))
+        {
             $this->disconnect();
+
             return false;
         }
+
         return true;
     }
 

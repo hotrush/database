@@ -246,16 +246,22 @@ class Kohana_Database_PDO extends Database {
 
     public function ping()
     {
-        if (!$this->_connection)
+        if ( ! $this->_connection)
         {
             return false;
         }
-        try {
+
+        try
+        {
             $this->query(self::SELECT,'SELECT 1');
-        } catch (PDOException $e) {
+        }
+        catch (PDOException $e)
+        {
             $this->disconnect();
+
             return false;
         }
+
         return true;
     }
 
